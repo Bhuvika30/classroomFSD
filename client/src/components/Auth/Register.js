@@ -16,9 +16,11 @@ const Register = () => {
   const { register, error, clearError } = useAuth()
   const navigate = useNavigate()
 
+  // ✅ Fix infinite render loop by running clearError only once on mount
   useEffect(() => {
     clearError()
-  }, [clearError])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleChange = e => {
     const { name, value } = e.target
@@ -74,9 +76,7 @@ const Register = () => {
   const handleSubmit = async e => {
     e.preventDefault()
 
-    if (!validateForm()) {
-      return
-    }
+    if (!validateForm()) return
 
     setIsSubmitting(true)
     const { confirmPassword, ...registrationData } = formData
@@ -92,9 +92,7 @@ const Register = () => {
     <div className="flex justify-center items-center min-h-screen">
       <div className="card w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-primary mb-2">
-            Join Classroom
-          </h1>
+          <h1 className="text-3xl font-bold text-primary mb-2">Join Classroom</h1>
           <p className="text-secondary">Create your account to get started</p>
         </div>
 
@@ -103,10 +101,9 @@ const Register = () => {
         )}
 
         <form onSubmit={handleSubmit}>
+          {/* Name */}
           <div className="form-group">
-            <label htmlFor="name" className="form-label">
-              Full Name
-            </label>
+            <label htmlFor="name" className="form-label">Full Name</label>
             <input
               type="text"
               id="name"
@@ -120,10 +117,9 @@ const Register = () => {
             {errors.name && <div className="form-error">{errors.name}</div>}
           </div>
 
+          {/* Email */}
           <div className="form-group">
-            <label htmlFor="email" className="form-label">
-              Email Address
-            </label>
+            <label htmlFor="email" className="form-label">Email Address</label>
             <input
               type="email"
               id="email"
@@ -137,10 +133,9 @@ const Register = () => {
             {errors.email && <div className="form-error">{errors.email}</div>}
           </div>
 
+          {/* Role */}
           <div className="form-group">
-            <label htmlFor="role" className="form-label">
-              Role
-            </label>
+            <label htmlFor="role" className="form-label">Role</label>
             <select
               id="role"
               name="role"
@@ -158,46 +153,36 @@ const Register = () => {
             </div>
           </div>
 
+          {/* Password */}
           <div className="form-group">
-            <label htmlFor="password" className="form-label">
-              Password
-            </label>
+            <label htmlFor="password" className="form-label">Password</label>
             <input
               type="password"
               id="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className={`form-input ${
-                errors.password ? 'border-red-500' : ''
-              }`}
+              className={`form-input ${errors.password ? 'border-red-500' : ''}`}
               placeholder="Create a password"
               disabled={isSubmitting}
             />
-            {errors.password && (
-              <div className="form-error">{errors.password}</div>
-            )}
+            {errors.password && <div className="form-error">{errors.password}</div>}
           </div>
 
+          {/* Confirm Password */}
           <div className="form-group">
-            <label htmlFor="confirmPassword" className="form-label">
-              Confirm Password
-            </label>
+            <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
             <input
               type="password"
               id="confirmPassword"
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
-              className={`form-input ${
-                errors.confirmPassword ? 'border-red-500' : ''
-              }`}
+              className={`form-input ${errors.confirmPassword ? 'border-red-500' : ''}`}
               placeholder="Confirm your password"
               disabled={isSubmitting}
             />
-            {errors.confirmPassword && (
-              <div className="form-error">{errors.confirmPassword}</div>
-            )}
+            {errors.confirmPassword && <div className="form-error">{errors.confirmPassword}</div>}
           </div>
 
           <button
@@ -210,19 +195,14 @@ const Register = () => {
                 <div className="loading"></div>
                 Creating Account...
               </span>
-            ) : (
-              'Create Account'
-            )}
+            ) : 'Create Account'}
           </button>
         </form>
 
         <div className="text-center">
           <p className="text-secondary">
             Already have an account?{' '}
-            <Link
-              to="/login"
-              className="text-primary font-semibold hover:underline"
-            >
+            <Link to="/login" className="text-primary font-semibold hover:underline">
               Sign in here
             </Link>
           </p>
@@ -233,4 +213,3 @@ const Register = () => {
 }
 
 export default Register
-

@@ -89,7 +89,7 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
-  // Load user once when app mounts
+  // Load user once when app mounts (fix infinite loop)
   useEffect(() => {
     const loadUser = async () => {
       const token = localStorage.getItem('token')
@@ -99,22 +99,17 @@ export const AuthProvider = ({ children }) => {
       }
 
       setAuthToken(token)
+
       try {
         const res = await axios.get('/api/auth/me')
-        // ✅ dispatch only if user is different or not loaded yet
-        if (!state.user || state.user._id !== res.data.user._id) {
-          dispatch({ type: 'USER_LOADED', payload: res.data.user })
-        } else {
-          dispatch({ type: 'SET_LOADING', payload: false })
-        }
+        dispatch({ type: 'USER_LOADED', payload: res.data.user })
       } catch (error) {
         dispatch({ type: 'AUTH_ERROR', payload: 'Failed to load user' })
       }
     }
 
     loadUser()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []) // run only once
+  }, []) // empty dependency = sirf ek baar
 
   // Update axios headers only when token changes
   useEffect(() => {
